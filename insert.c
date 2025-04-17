@@ -1,14 +1,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <limits.h>
  
 void insert_substring(char*, char*, int);
 char* substring(char*, int, int);
  
 int main()
 {
-   char text[100], substring[100];
+   char text[100], substring[100], position_str[50];
    int position;
+   char *endptr;
  
    printf("Enter some text\n");
    fgets(text, sizeof(text), stdin);
@@ -19,8 +21,21 @@ int main()
    substring[strcspn(substring, "\n")] = '\0'; // Elimina el salto de línea si existe
  
    printf("Enter the position to insert\n");
-   scanf("%d", &position);
+   fgets(position_str, sizeof(position_str), stdin);
 
+   // Validar si se ingresó un número entero válido
+   long pos_long = strtol(position_str, &endptr, 10);
+   if (pos_long < INT_MIN || pos_long > INT_MAX) {
+      printf("Error: El número entero está fuera del rango permitido.\n");
+      return 1;
+   }
+
+   if (*endptr != '\n') {
+      printf("Error: Lo ingresado no es un número entero válido.\n");
+      return 1;
+   }
+   position = (int)pos_long;
+   
    // Validación de la posición
    if (position < 1 || position > strlen(text)) {
       printf("Error: Posición inválida. Debe estar entre 1 y %ld.\n", strlen(text));
